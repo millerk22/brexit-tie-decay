@@ -1,59 +1,59 @@
-import os
+# import os
+import pickle
 import numpy as np
-import scipy as sp
-import networkx as nx
-import pandas as pd
+# import networkx as nx
 
 # os.chdir("/Users/qinyichen/Documents/brexit-tie-decay/Data/data_3_9jun")
-# data = pd.read_csv("edge_list.csv")
-os.chdir("/Users/qinyichen/Desktop")
-data = pd.read_csv("tie_decay_test.csv")
+# data = pd.read_csv("edge_list_updated.csv")
+# os.chdir("/Users/qinyichen/Desktop")
+# data = pd.read_csv("tie_decay_test.csv")
 
-source  = np.array(data["source_id"])
-target  = np.array(data["target_id"])
-N = max(max(source), max(target))      # N: number of elements
+# source  = np.array(data["source_id"])
+# target  = np.array(data["target_id"])
+# N = max(max(source), max(target))      # N: number of elements
 
 # G = nx.from_pandas_edgelist(data, "source_id", "target_id", "Weight")
 # A = nx.adjacency_matrix(G)
 
-# TODO: The following function assumes the timestamps in edge_list is a list
-# of integers. Need to convert current timestamps  into minutes.
+with open('edge_dict.pkl','rb') as f:
+    data = pickle.load(f)
 
-def tie_decay_matrix(edge_list, N, T, dt=1, alpha=0.1):
+def tie_decay_matrix(edge_list, T, t_start=0, dt=60, alpha=0.1):
 
     """
     INPUT:
-    (1) edge_list: an edge list that involves time, src, dst, type, weight
-    (2) N: number of nodes
-    (3) T: time of interest
+    (1) edge_list: a dictionary with keys being (i, j) and values being
+                   the list of (time, weight) tuple
+    (2) T: end of time of interest
+    (3) t_start: start of time of interest
     (4) dt: size of time step
     (5) alpha: decay coefficient
 
     OUTPUT:
     B(T): connection matrix at time T
     """
-
-    t_start = edge_list["source_tweet_created_at"][0]
-    # t_end = edge_list["source_tweet_created_at"][-1]
-
-    # Initialize B at t = 0
-    B = np.zeros((N, N))
+    # Initialize B at t = 0 with no activities
+    B = {}
 
     # Update B at different time
     for t in range(t_start, T, dt):
+        print ("start calculating B at t =", t)
+
         # entries of B decay from t to t+dt
-        B = B * np.exp(-alpha * dt)
+        B.update((k, v*np.exp(-alpha * dt)) for k, v in B.items())
 
         # Add the new interactions
-        new_edges = edge_list[(edge_list["source_tweet_created_at"] >= t) &
-                              (edge_list["source_tweet_created_at"] < t + dt)]
+        for edge, attrs in edge_list.items():
+            # print ("now checking:", edge, attrs)
+            # check whether there are iterations in this time step
+            while attrs and attrs[0][0] >= t and attrs[0][0] < t+dt:
+                time, weight = attrs.pop()
+                B[edge] = B.get(edge, 0) + weight
 
-        for ind, row in new_edges.iterrows():
-            B[row["source_id"]][row["target_id"]] += 1
-            print (row["source_id"], row["target_id"])
-            # TODO: Should we take weight into account?
+        # Update the remaining edge list; not sure if necessary
+        edge_list = {k:edge_list[k] for k in edge_list if edge_list[k]}
 
     return B
 
-import IPython
-IPython.embed()
+tie_decay_result = tie_decay_matrix(data, 1000)
+# result = tie_decay_matrix(data, 3425100)

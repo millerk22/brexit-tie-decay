@@ -5,8 +5,6 @@ import numpy as np
 
 # os.chdir("/Users/qinyichen/Documents/brexit-tie-decay/Data/data_3_9jun")
 # data = pd.read_csv("edge_list_updated.csv")
-# os.chdir("/Users/qinyichen/Desktop")
-# data = pd.read_csv("tie_decay_test.csv")
 
 # source  = np.array(data["source_id"])
 # target  = np.array(data["target_id"])

@@ -30,17 +30,16 @@ def tie_decay_matrix(edge_dict, T, alpha):
     (2) T: time of interest
     (3) alpha: decay coefficient
     OUTPUT:
-    B_dict(T): dictionary for weight matrix
+    B_dict(T): dictionary for edge with weight
     """
     
 
-    # Initialize B_dict dictionary for weight matrix
+    # Initialize B_dict dictionary for edge with weight
     B_dict = {}
 
     # Fill up B_dict according to edge_dict
     for key,value in edge_dict.items():
-        #Initialize B_dict，in a structure of the dictionary of dictionaries to use the 
-        #networkx function, nx.from_dict_of_dicts(B) later in main()
+        #Initialize B_dict to use G_B = nx.from_dict_of_dicts(B) later in main()
         #Format of B_dict is "dod = {0: {1: {'weight': 1}}} # single edge (0,1)"
         (i,j) = key #the pair of node
         
@@ -50,24 +49,18 @@ def tie_decay_matrix(edge_dict, T, alpha):
         
         #For each pair of nodes interacted,
         for k in range(len(value)-1):
-            time_diff = T-value[k][0] #time difference between time of kth 
-            #interaction and time of interest.
+            time_diff = T-value[k][0] #time difference between time of kth interaction and time of interest.
             
             #If time of interest is less than the current interaction time, 
             #go on to the next pair of node. Relying on the increasing 
-            #order of time in j the time tuple here.
+            #order of time in j, the time tuple.
             if time_diff < 0:
                 break
             
-            decay = m.exp(-alpha*time_diff) #decay from current 
-            #interaction to time of interest
-            #if -alpha*time_diff != 0:
-                #print(-alpha*time_diff)
+            decay = m.exp(-alpha*time_diff) #decay from current interaction to time of interest            
             B_dict[str(i)][str(j)]["weight"] *= decay
-            B_dict[str(i)][str(j)]["weight"] += value[k][1]*decay #value[k][1] is the 
-            #weight of kthe interaction
-            #if value[k][1]*decay !=0:
-                #print(value[k][1]*decay)
+            B_dict[str(i)][str(j)]["weight"] += value[k][1]*decay #value[k][1] is the weight of the kth interaction
+         
     return B_dict
 
 

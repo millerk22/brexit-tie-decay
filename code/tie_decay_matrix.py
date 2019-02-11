@@ -17,7 +17,7 @@ from sklearn import metrics
 with open('edge_dict.pkl','rb') as f:
     data = pickle.load(f)
 
-def tie_decay_matrix(edge_list, T, t_start=0, dt=60, alpha=0.1):
+def tie_decay_matrix(edge_list, T, data=None, t_start=0, dt=60, alpha=0.1):
 
     """
     INPUT:
@@ -27,16 +27,21 @@ def tie_decay_matrix(edge_list, T, t_start=0, dt=60, alpha=0.1):
     (3) t_start: start of time of interest
     (4) dt: size of time step
     (5) alpha: decay coefficient
-
+    (6) data: if we have saved data from before
+    
     OUTPUT:
     B(T): connection matrix at time T
     """
-    # Initialize B at t = 0 with no activities
-    B = {}
+    # Initialize B at t = t_start with no activities
+    if data:
+        B = data
+    else:
+        B = {}
 
     # Update B at different time
     for t in range(t_start, T, dt):
-#        print ("start calculating B at t =", t)
+        if t % 6000 == 0:
+            print ("start calculating B at t =", t)
 
         # entries of B decay from t to t+dt
         B.update((k, v*np.exp(-alpha * dt)) for k, v in B.items())

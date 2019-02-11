@@ -75,8 +75,8 @@ def tie_decay_matrix(edge_dict, T, alpha):
     
   
 def main():
-    #T input by hand, 1465369200 is the time of the end of the first week  
-    B = tie_decay_matrix(edge_dict, 1465369200, 0.0000000001)
+    #T input by hand 
+    B = tie_decay_matrix(edge_dict, 3425035, 0.0000000001)
     
     #Turn dictionary B into a Graph
     G_B = nx.from_dict_of_dicts(B)

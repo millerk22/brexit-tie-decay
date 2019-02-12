@@ -69,11 +69,11 @@ def plotting(G_B, nodelist): #code by qinyi
 
     plt.figure()
     nx.draw(G_B, pos, nodelist = nodelist,node_size=5, node_color='b', edgelist=edges, edge_color=color, width=width)
-    plt.savefig("tie_decay_example.png")
+    plt.savefig("G_B.png")
     plt.close()
   
 def main():
-    #T input by hand, 1465369200 is the time of the end of the first week  
+   
     T = [ 604800, 518400, 432000, 345600, 259200, 172800, 86400]
     B_list = [tie_decay_matrix(edge_dict, T[i], 0.000001) for i in range(6)]   
     B_sub = [sorted(B_list[i],key=itemgetter(2))[:3000] for i in range(6)] # a subgraph of most heavy weighted edges after each day

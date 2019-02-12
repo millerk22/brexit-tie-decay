@@ -13,9 +13,14 @@ import pickle
 import time
 import networkx as nx
 start_time = time.time()
+import matplotlib.pyplot as plt
+import matplotlib.colors as colors
+import matplotlib.cm as cmx
+from operator import itemgetter
 
 
- 
+
+
 
 os.chdir("/Users/xiaojing/Downloads/data_3_9jun-3")
 with open('edge_dict.pkl', 'rb') as f:
@@ -24,61 +29,67 @@ with open('edge_dict.pkl', 'rb') as f:
 
 def tie_decay_matrix(edge_dict, T, alpha):
 
-    """
+    """ 
     INPUT:
     (1) edge_dict: dictionary of tuples of time between pairs of nodes
     (2) T: time of interest
     (3) alpha: decay coefficient
     OUTPUT:
-    B_dict(T): dictionary for edge with weight
-    """
+    B_dict(T): list of tuples of weighted edges at time of interest
+    """ 
     
 
-    # Initialize B_dict dictionary for edge with weight
-    B_dict = {}
-
-    # Fill up B_dict according to edge_dict
+    # Initialize B_dict list for weight matrix
+    B_dict = []
     for key,value in edge_dict.items():
-        #Initialize B_dict to use G_B = nx.from_dict_of_dicts(B) later in main()
-        #Format of B_dict is "dod = {0: {1: {'weight': 1}}} # single edge (0,1)"
+       
         (i,j) = key #the pair of node
         
-        B_dict[str(i)] = {}
-        B_dict[str(i)][str(j)] = {}
-        B_dict[str(i)][str(j)]["weight"] = 0
-        
-        #For each pair of nodes interacted,
-        for k in range(len(value)-1):
-            time_diff = T-value[k][0] #time difference between time of kth interaction and time of interest.
+        weight = 0
+        for item in value:
+            time_diff = T-item[0] 
             
-            #If time of interest is less than the current interaction time, 
-            #go on to the next pair of node. Relying on the increasing 
-            #order of time in j, the time tuple.
             if time_diff < 0:
-                break
+                break            
+            decay = m.exp(-alpha*time_diff) 
+            weight += item[1]*decay
+        
             
-            decay = m.exp(-alpha*time_diff) #decay from current interaction to time of interest            
-            B_dict[str(i)][str(j)]["weight"] *= decay
-            B_dict[str(i)][str(j)]["weight"] += value[k][1]*decay #value[k][1] is the weight of the kth interaction
-         
+        if weight != 0:   
+            B_dict.append((i,j,weight))
+              
     return B_dict
 
+def plotting(G_B, nodelist): #code by qinyi
+    print ("Now start plotting")
+    edges,weights = zip(*nx.get_edge_attributes(G_B,'weight').items())
+    color = ['r' if w > 10 ** -10 else 'b' for w in weights]
+    width = [1 if w > 10 ** -10 else 0.1 for w in weights]
+    pos = nx.spring_layout(G_B)
 
-    
-    
+    plt.figure()
+    nx.draw(G_B, pos, nodelist = nodelist,node_size=5, node_color='b', edgelist=edges, edge_color=color, width=width)
+    plt.savefig("tie_decay_example.png")
+    plt.close()
   
 def main():
-    #T input by hand 
-    B = tie_decay_matrix(edge_dict, 3425035, 0.0000000001)
+    #T input by hand, 1465369200 is the time of the end of the first week  
+    T = [ 604800, 518400, 432000, 345600, 259200, 172800, 86400]
+    B_list = [tie_decay_matrix(edge_dict, T[i], 0.000001) for i in range(6)]   
+    B_sub = [sorted(B_list[i],key=itemgetter(2))[:3000] for i in range(6)] # a subgraph of most heavy weighted edges after each day
     
-    #Turn dictionary B into a Graph
-    G_B = nx.from_dict_of_dicts(B)
-    #plotting(G_B)
+    G_B = nx.DiGraph() 
+    G_B.add_weighted_edges_from(B_sub[1]) # subgraphs
+   
+    
+    plotting(G_B[1],list(G_B))
     
     print("--- %s seconds ---" % (time.time() - start_time))
-    
+   
         
 if __name__ == '__main__':
     main()
+
+
 
     

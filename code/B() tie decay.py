@@ -82,7 +82,7 @@ def main():
     G_B.add_weighted_edges_from(B_sub[1]) # subgraphs
    
     
-    plotting(G_B[1],list(G_B))
+    plotting(G_B,list(G_B))
     
     print("--- %s seconds ---" % (time.time() - start_time))
    

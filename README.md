@@ -2,6 +2,7 @@
 MATH 276 Group looking into the Brexit data and applying tie decay framework to community detection.
 
 * Please see: https://docs.google.com/presentation/d/1yo4kj23_5CfLAgU31bD9zBwSpgh2T9CkHLLb3ByNE-w/edit?usp=sharing for the Mini Presentation Google slides.
+* Please see: https://www.overleaf.com/project/5c7232c116631219ceeaa676 for the Paper that is in progress.
 
 
 

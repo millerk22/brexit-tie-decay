@@ -4,7 +4,7 @@ Created on Wed Feb 27 20:38:57 2019
 
 @author: hexie
 """
-#import pickle
+import pickle
 import numpy as np
 path="TopUsers/"
 
@@ -20,10 +20,10 @@ def get_top_X_Users(data_root, X=10, A=0, B=35):
             old.append(key)
     return old
 
-K=list(set(get_top_X_Users(path,3)))
+K=list(set(get_top_X_Users(path,5)))
 
-#with open('full_edge_dict.pkl', 'rb') as f:
-#    data = pickle.load(f)
+with open('hashtag.pkl', 'rb') as f:
+    data = pickle.load(f)
 ## supursingly ? the top 10 nodes with highest pagerank have a lot of overlapping
 node_id= open("nodes.txt","r")
 d={}
@@ -36,8 +36,16 @@ for line in node_id:
 
 seed={}
 
-#for item in K:
-#    print (d[str(item)])
-#    answer = input("What is this node's type? (0-leave 1-stay 2-neutral) ")
-#    type(answer)
-#    seed[item]=answer
+K.remove(563600)
+for item in K:
+    print (item)
+    print (d[str(item)])
+    try:
+        print(data[d[str(item)].strip()])
+    except:
+        "this node is not found in the dictionary, why?"
+    answer = input("What is this node's type? (0-leave 1-stay 2-neutral 100-not found) ")
+    type(answer)
+    seed[item]=answer
+
+np.save('seed.npy',seed)

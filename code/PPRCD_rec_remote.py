@@ -7,8 +7,7 @@ import time
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# where the code tie_decay_edge_list.py is locatex
-os.chdir("/Users/Kevin/Desktop/UCLA/2019/276/Project/brexit-tie-decay/code")
+# where the code tie_decay_edge_list.py is located, assuming is in same directory as /code/PPRCD-rec_remote.py
 import tie_decay_edge_list as tdel
 
 def get_hashtag_dict(fname):
@@ -18,7 +17,7 @@ def get_hashtag_dict(fname):
 
 def check_node_time(s, td_time):
     print('Checking if node %d is in the tie decay graph at this time %f' % (s, td_time))
-    with open('/Users/Kevin/Desktop/UCLA/2019/276/Project/full_data_smaller/full_edge_dict.pkl', 'rb') as f:
+    with open('../Data/full_data_smaller/full_edge_dict.pkl', 'rb') as f:
         d = pickle.load(f)
 
     # calculate the tie decay network at edge dictionary
@@ -36,7 +35,7 @@ def check_node_time(s, td_time):
         return 0
 
 def check_node_names(n):
-    df = pd.read_csv('/Users/Kevin/Desktop/UCLA/2019/276/Project/full_data_smaller/nodes.txt')
+    df = pd.read_csv('../Data/full_data_smaller/nodes.txt')
     vals = df.values
     nodes, names = list(vals[:,0]), list(vals[:,1])
     return [names[nodes.index(i)] for i in n]
@@ -80,7 +79,7 @@ else:
     print('Graph for time %d not present, so calculating' % td_time)
     tic = time.clock()
     # load the edge dictionary, for me is in full_data_smaller directory
-    with open('/Users/Kevin/Desktop/UCLA/2019/276/Project/full_data_smaller/full_edge_dict.pkl', 'rb') as f:
+    with open('../Data/full_data_smaller/full_edge_dict.pkl', 'rb') as f:
         d = pickle.load(f)
     t = time.clock() - tic
     print('%f seconds to load edge_dict' % t)
@@ -109,7 +108,7 @@ else:
 
 ##### Need to get the seed nodes for the specific communities
 
-s_d = np.load('/Users/Kevin/Desktop/UCLA/2019/276/Project/brexit-tie-decay/Data/seed.npy').item()
+s_d = np.load('../Data/seed.npy').item()
 
 
 seed = [k for k,v in s_d.items() if v == community]
@@ -122,7 +121,7 @@ for s in seed:
         seed.pop(seed.index(s))
 
 
-nodes = pd.read_csv('/Users/Kevin/Desktop/UCLA/2019/276/Project/full_data_smaller/nodes.txt')
+nodes = pd.read_csv('../Data/full_data_smaller/nodes.txt')
 nodeid2name = dict(zip(nodes['node_id'], nodes['name']))
 #names = [nodeid2name[n] for n in seed]
 top_nodes, com = zip(*s_d.items())
@@ -264,7 +263,7 @@ print(str(names))
 
 
 
-hash_dict = get_hashtag_dict('/Users/Kevin/Desktop/UCLA/2019/276/Project/hashtag.pkl')
+hash_dict = get_hashtag_dict('../Data/hashtag.pkl')
 import IPython
 IPython.embed()
 

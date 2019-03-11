@@ -8,3 +8,5 @@ data_3_9jun_dict.zip -- OLD, OUTDATED zipped file containing smaller scale data,
 
 
 hashtag.pkl -- python pickle file that contains python dictionary of (key, value) pairs as (source, {source_hashtags}). 'source' is the Twiter handle and the value is a set of the unique hashtags that the person has used throughout the timeline of our dataset. 
+
+w1.csv -- Nodes of week 1 subcommunities find by mapequation, followed by subcommunities, with remain neutral or leave assigned.

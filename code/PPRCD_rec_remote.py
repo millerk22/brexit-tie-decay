@@ -50,7 +50,7 @@ Changes done by Kevin Miller 3/3/2019
 '''
 # parameters for actions
 community = '0'  # '0' = Leave, '1' = Remain, '2' = Neutral
-week = 3
+week = 4
 plot = False
 ipy = False
 verbose = False
@@ -69,7 +69,7 @@ tot_seconds = sat_second*5
 td_time = week*sat_second
 print('Calculating PPR for %s of Saturday %d\n\n' % (comm[int(community)], week))
 
-fname = './G_%d.pkl' % td_time
+fname = '../Data/G_%d.pkl' % td_time
 if os.path.isfile(fname): # if have already translated this graph to node edge list then load it
     print('Found the file')
     with open(fname, 'rb') as f:
